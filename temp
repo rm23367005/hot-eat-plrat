@@ -1,0 +1,25 @@
+import smbus
+import time
+
+i2c = smbus.SMBus(1)
+address = 0x48
+
+f = open("adt7410.csv", "w")
+
+for i in range(10):
+
+    data = i2c.read_word_data(address, 0x00)
+
+    data = (data & 0xFF00) >> 8 | (data & 0x00FF) << 8
+
+    if(data >= 4096):
+        data -= 8192
+    data *= 0.0625
+
+    print(data)
+
+    f.write(str(i+1) + "," + str(data) + "\n")
+
+    time.sleep(1)
+
+f.close()
